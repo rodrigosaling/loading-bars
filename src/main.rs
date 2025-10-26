@@ -9,19 +9,28 @@ use std::thread::sleep;
 fn main() -> io::Result<()> {
     let mut stdout = io::stdout();
 
-    // sleep(std::time::Duration::from_secs(1));
-    
-    let initial_string = "here starts:";
-    let initial_string_length = initial_string.len();
-    
-    write!(stdout, "{}", initial_string)?;
-    // execute!(stdout, cursor::MoveRight(initial_string_length.try_into().unwrap()))?;
-    
-    sleep(std::time::Duration::from_secs(2));
-    write!(stdout, "⭐️")?;
-    sleep(std::time::Duration::from_secs(2));
-    execute!(stdout, cursor::MoveTo(0,0))?;
-    write!(stdout, "H")?;
+    // Clear the screen
+    execute!(stdout, Clear(ClearType::All))?;
+
+    // 1. Write the initial text.
+    write!(stdout, "This is a long line of text.")?;
+    stdout.flush()?;
+
+    // Wait a moment so you can see the initial line
+    sleep(std::time::Duration::from_secs(1));
+
+    // 2. Move the cursor back to the start of the line (0,0).
+    execute!(stdout, cursor::MoveTo(0, 0))?;
+
+    // 3. Write the new, shorter text.
+    write!(stdout, "New text.")?;
+
+    // 4. Clear the line from the cursor position to the end.
+    // execute!(Clear(ClearType::UntilNewLine))?;
+
+    // 5. Add a new line so subsequent prints don't get overwritten.
+    writeln!(stdout)?;
+    writeln!(stdout, "Next line starts here.")?;
     
     Ok(())
 }
